@@ -12,7 +12,8 @@
   "author": "Arthur Chukhnenko",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.12.12"
   },
   "devDependencies": {
     "eslint": "^7.27.0",

@@ -10,7 +10,14 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.id)
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (user) {
+        return res.send({ data: user });
+      }
+      return res
+        .status(404)
+        .send({ message: `Пользователь по указанному _id не найден.` });
+    })
     .catch((err) =>
       res.status(500).send({ message: `Произошла ошибка: ${err.message}` })
     );
@@ -21,9 +28,16 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err.message}` })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({
+          message: `Переданы некорректные данные при создании пользователя.`,
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -37,10 +51,24 @@ module.exports.updateProfile = (req, res) => {
       runValidators: true,
     }
   )
-    .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err.name}` })
-    );
+    .then((user) => {
+      if (!user) {
+        res
+          .status(404)
+          .send({ message: `Пользователь с указанным _id не найден.` });
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({
+          message: `Переданы некорректные данные при обновлении профиля.`,
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -53,8 +81,22 @@ module.exports.updateAvatar = (req, res) => {
       runValidators: true,
     }
   )
-    .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err.message}` })
-    );
+    .then((user) => {
+      if (!user) {
+        res
+          .status(404)
+          .send({ message: `Пользователь с указанным _id не найден.` });
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({
+          message: `Переданы некорректные данные при обновлении профиля.`,
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
 };

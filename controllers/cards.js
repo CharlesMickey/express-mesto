@@ -35,9 +35,16 @@ module.exports.deleteCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err.message}` })
-    );
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res.status(400).send({
+          message: "Передан некорректный идентификатор карточки.",
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
 };
 
 module.exports.likeCard = (req, res) => {
@@ -48,15 +55,22 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(400).send({
+        res.status(404).send({
           message: "Переданы некорректные данные для постановки лайка.",
         });
       }
       res.send({ data: card });
     })
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err.message}` })
-    );
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res.status(400).send({
+          message: "Передан некорректный идентификатор карточки.",
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -67,13 +81,20 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(400).send({
+        res.status(404).send({
           message: "Переданы некорректные данные для снятия лайка.",
         });
       }
       res.send({ data: card });
     })
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err.message}` })
-    );
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res.status(400).send({
+          message: "Передан некорректный идентификатор карточки.",
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
 };

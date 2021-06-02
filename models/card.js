@@ -23,7 +23,7 @@ const cardSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  craetedAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },

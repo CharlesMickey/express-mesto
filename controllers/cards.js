@@ -16,7 +16,7 @@ module.exports.createCard = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({
-          message: `Переданы некорректные данные при создании карточки`,
+          message: "Переданы некорректные данные при создании карточки",
         });
       }
       return res
@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res) => {
       if (!card) {
         res
           .status(404)
-          .send({ message: `Карточка с указанным _id не найдена.` });
+          .send({ message: "Карточка с указанным _id не найдена." });
       }
       res.send({ data: card });
     })
@@ -49,7 +49,7 @@ module.exports.likeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(400).send({
-          message: `Переданы некорректные данные для постановки лайка.`,
+          message: "Переданы некорректные данные для постановки лайка.",
         });
       }
       res.send({ data: card });
@@ -68,7 +68,7 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(400).send({
-          message: `Переданы некорректные данные для снятия лайка.`,
+          message: "Переданы некорректные данные для снятия лайка.",
         });
       }
       res.send({ data: card });

@@ -1,12 +1,16 @@
 {
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
   "extends": [
     "airbnb-base",
     "plugin:prettier/recommended",
-    "some-other-config-you-use",
     "prettier"
   ],
   "rules": {
     "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-    "quotes": ["error", "double"],
+    "quotes": ["error", "double"]
   }
 }

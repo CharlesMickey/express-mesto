@@ -6,6 +6,7 @@ const routesUsers = require("./routes/users");
 const routesCards = require("./routes/cards");
 const nonExistentRoute = require("./routes/nonExistentRoute");
 const { login, createUser } = require("./controllers/users");
+const auth = require("./middlewares/auth");
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -20,16 +21,11 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useFindAndModify: false,
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "60b651e56165e93410f9c16f",
-  };
-
-  next();
-});
-
 app.post("/signin", login);
 app.post("/signup", createUser);
+
+app.use(auth);
+
 app.use(routesCards);
 app.use(routesUsers);
 app.use(nonExistentRoute);

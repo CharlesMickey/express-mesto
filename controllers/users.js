@@ -11,6 +11,28 @@ module.exports.getAllUsers = (req, res) => {
     );
 };
 
+module.exports.getInfoProfile = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        res
+          .status(404)
+          .send({ message: "Пользователь с указанным _id не найден." });
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({
+          message: "Переданы некорректные данные при обновлении профиля.",
+        });
+      }
+      return res
+        .status(500)
+        .send({ message: `Произошла ошибка: ${err.message}` });
+    });
+};
+
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {

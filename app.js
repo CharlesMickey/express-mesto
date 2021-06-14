@@ -1,9 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const routesUsers = require("./routes/users");
 const routesCards = require("./routes/cards");
 const nonExistentRoute = require("./routes/nonExistentRoute");
+const { login, createUser } = require("./controllers/users");
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -26,6 +28,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post("/signin", login);
+app.post("/signup", createUser);
 app.use(routesCards);
 app.use(routesUsers);
 app.use(nonExistentRoute);

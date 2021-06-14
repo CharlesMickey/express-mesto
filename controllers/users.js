@@ -1,4 +1,6 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 module.exports.getAllUsers = (req, res) => {
@@ -46,6 +48,39 @@ module.exports.createUser = (req, res) => {
       return res
         .status(500)
         .send({ message: `Произошла ошибка: ${err.message}` });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error("Неправильные почта или пароль"));
+      }
+
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          // хеши не совпали — отклоняем промис
+          return Promise.reject(new Error("Неправильные почта или пароль"));
+        }
+
+        const token = jwt.sign(
+          { _id: user._id },
+          NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
+          { expiresIn: "7d" }
+        );
+        return res
+          .cookie("jwt", token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+          })
+          .send({ message: "Вы успешно авторизованны!" });
+      });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };
 

@@ -1,3 +1,5 @@
+.env
+
 # Logs
 logs
 *.log
@@ -12,4 +14,4 @@ node_modules
 # Optional REPL history
 .DS_Store
 .idea
-.vscode 
+.vscode

@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const { celebrate, Joi, errors } = require("celebrate");
 const routesUsers = require("./routes/users");
 const routesCards = require("./routes/cards");
@@ -21,6 +22,8 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useCreateIndex: true,
   useFindAndModify: false,
 });
+
+app.use(cookieParser());
 
 app.post(
   "/signin",

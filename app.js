@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const { celebrate, Joi, errors } = require("celebrate");
 const routesUsers = require("./routes/users");
 const routesCards = require("./routes/cards");
 const nonExistentRoute = require("./routes/nonExistentRoute");
@@ -21,14 +22,42 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useFindAndModify: false,
 });
 
-app.post("/signin", login);
-app.post("/signup", createUser);
+app.post(
+  "/signin",
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  login
+);
+
+app.post(
+  "/signup",
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+      name: Joi.string().min(2).max(30),
+      avatar: Joi.string().pattern(
+        new RegExp(
+          /^((http|https):\/\/)(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.)+[A-Za-zА-Яа-я0-9-]{2,8}(([\w\-._~:/?#[\]@!$&'()*+,;=])*)/
+        )
+      ),
+      about: Joi.string().min(2).max(30),
+    }),
+  }),
+  createUser
+);
 
 app.use(auth);
 
 app.use(routesCards);
 app.use(routesUsers);
 app.use(nonExistentRoute);
+
+app.use(errors()); // обработчик ошибок celebrate
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;

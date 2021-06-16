@@ -1,9 +1,8 @@
 const router = require("express").Router();
+const NotFoundError = require("../errors/not-found-err");
 
-router.get("*", (req, res) => {
-  res.status(404).send({
-    message: "Вы пытаетесь перейти по несуществующему пути.",
-  });
+router.get("*", () => {
+  throw new NotFoundError("Вы пытаетесь перейти по несуществующему пути.");
 });
 
 module.exports = router;

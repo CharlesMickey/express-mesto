@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -9,10 +11,17 @@ const routesCards = require("./routes/cards");
 const nonExistentRoute = require("./routes/nonExistentRoute");
 const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
+const handleErrors = require("./errors/handleErrors");
 
 const { PORT = 3000 } = process.env;
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
 
+app.use(limiter);
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -60,13 +69,6 @@ app.use(nonExistentRoute);
 
 app.use(errors()); // обработчик ошибок celebrate
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res.status(statusCode).send({
-    message: statusCode === 500 ? "На сервере произошла ошибка" : message,
-  });
-  next();
-});
+app.use(handleErrors);
 
 app.listen(PORT);

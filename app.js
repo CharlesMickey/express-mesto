@@ -12,6 +12,7 @@ const nonExistentRoute = require("./routes/nonExistentRoute");
 const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
 const handleErrors = require("./errors/handleErrors");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -33,6 +34,7 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
 });
 
 app.use(cookieParser());
+app.use(requestLogger);
 
 app.post(
   "/signin",
@@ -66,6 +68,8 @@ app.use(auth);
 app.use(routesCards);
 app.use(routesUsers);
 app.use(nonExistentRoute);
+
+app.use(errorLogger);
 
 app.use(errors()); // обработчик ошибок celebrate
 
